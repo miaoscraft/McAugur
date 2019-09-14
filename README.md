@@ -1,26 +1,60 @@
-# 一个酷Q插件
-这里是你用Go开发酷Q插件的起点
+# McAugur
+Minecraft服务器QQ群算命/占卜插件
 
 ## 开始
-赶快点击右上角的`Use this template`绿色按钮开始吧！
-用本模板新建一个项目（到你自己的Github账号上），然后将你的项目克隆至本地。
-或者直接下载本模板项目。
+release里面有打包好的
+自己拿去用就是了
 
-## 安装环境
-1. [Go语言编译器](https://golang.google.cn/)；
-2. [gcc编译器](http://tdm-gcc.tdragon.net/)；  
-
-## 启动酷Q的开发者模式
-请查看酷Q官方的[文档](https://d.cqp.me/Pro/%E5%BC%80%E5%8F%91/%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8)
-
-## 修改路径
-要修改的地方有几处：
-1. go.mod文件第一行，改为你自己项目的地址
-2. app.go文件main函数前`// cqp:`开头的注释，修改名称、版本、作者和简介
-3. app.go文件init函数内，修改你的AppID
-4. 若需要自动复制文件，请设置环境变量DevDir（看看build.bat第20行）
-
-## 编译
-运行`build.bat`
-
-最后，在酷Q的菜单-应用管理中，点击重载应用，你应该就能看到你的插件了。
+## 配置文件
+第一次使用这个插件他会蹦你一次酷Q，然后给你整一个配置文件
+这是一个实例配置文件
+```
+{
+    "Places": [
+        {
+            "Name": "ero岛",
+            "PlaceEvents": [
+                {
+                    "Name": "白嫖铁块",
+                    "Lucky": true
+                }
+            ]
+        },
+        {
+            "Name": "柚子村",
+            "PlaceEvents": [
+                {
+                    "Name": "白嫖村民被ZBin打死",
+                    "Lucky": false
+                }
+            ]
+        }
+    ],
+    "GeneralEvents": [
+        {
+            "Name": "白嫖会被抓现行",
+            "Lucky": false
+        },
+        {
+            "Name": "白嫖",
+            "Lucky": true
+        },
+        {
+            "Name": "被雷劈死",
+            "Lucky": false
+        }
+    ],
+    "Group": 1008610010
+}
+```
+按照实例修改就行了
+## 工作原理
+1. 把时间和qq号丢在一起，科学地计算md5
+2. 把md5整成随机数源，算随机数
+3. 根据随机数读取事件发生地点
+4. 把该地点特有事件和通用事件丢一起再整一个随机数抽事件
+5. 输出算命结果
+## 感谢
+[BaiMeow](https://github.com/MscBaiMeow)（插件作者）
+[Tnze](https://github.com/Tnze)（SDK开发者）
+[Miaoscraft](https://miaoscraft.cn)（组织）
