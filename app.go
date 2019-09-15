@@ -60,7 +60,7 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	return 0
 }
 
-// 若出现错误则panic（正常情况永不panic）
+// 恐慌之神马斯特
 func must(err error) {
 	if err != nil {
 		panic(err)
