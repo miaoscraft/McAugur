@@ -1,12 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"crypto/md5"
 	"encoding/binary"
-	"fmt"
-	"io"
 	"math/rand"
+	"path/filepath"
 	"time"
 
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
@@ -29,7 +27,14 @@ func init() {
 }
 
 func onEnable() int32 {
-	config = conf.Loadconf()
+	filename := filepath.Join(cqp.GetAppDir(), "conf.json")
+	c, err := conf.Loadconf(filename)
+	if err != nil {
+		cqp.AddLog(cqp.Error, "McAuger", err.Error())
+	} else {
+		config = *c
+	}
+
 	return 0
 }
 
@@ -44,25 +49,34 @@ func addInfo(info string) {
 	cqp.AddLog(cqp.Info, "McAugur", info)
 }
 
+// 若出现错误则panic（正常情况永不panic）
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func augur(fromQQ int64) int32 {
 	//启动术式
 	hash := md5.New()
+
 	//将被占卜物代入天命术式
-	io.WriteString(hash, fmt.Sprint(fromQQ, time.Now().Day()))
-	//获取destiny 天命
-	destiny := hash.Sum(nil)
-	//将天命翻译为占卜语言
-	buf := bytes.NewBuffer(destiny)
-	var intdestiny int64
-	binary.Read(buf, binary.LittleEndian, &intdestiny)
-	//将翻译过的天命代入占卜公式
-	rand.Seed(intdestiny)
+	must(binary.Write(hash, binary.BigEndian, fromQQ)) // never returns a err
+	y, m, d := time.Now().Date()
+	must(binary.Write(hash, binary.BigEndian, y))
+	must(binary.Write(hash, binary.BigEndian, m))
+	must(binary.Write(hash, binary.BigEndian, d))
+
+	//用天命开始占卜
+	destiny := hash.Sum(nil) //获取destiny 天命
+	rand.Seed(int64(binary.BigEndian.Uint64(destiny)))
+
 	//占卜获得地点ID
 	placeID := rand.Intn(len(config.Places))
 	result := "去" + config.Places[placeID].Name
+
 	//二次占卜获得事件ID
-	events := config.GeneralEvents
-	events = append(events, config.Places[placeID].PlaceEvents...)
+	events := append(config.GeneralEvents, config.Places[placeID].PlaceEvents...)
 	EventID := rand.Intn(len(events))
 	if events[EventID].Lucky == true {
 		result = "今日 吉：" + result + events[EventID].Name

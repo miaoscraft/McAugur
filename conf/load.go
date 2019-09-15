@@ -29,25 +29,27 @@ type Event struct {
 }
 
 //Loadconf is used to load Config
-func Loadconf() Config {
-	var Config Config
-	data, err := ioutil.ReadFile(".\\conf\\McAugur.json")
+func Loadconf(filename string) (*Config, error) {
+	c := new(Config)
+
+	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		if os.IsNotExist(err) {
-			if data, err = json.Marshal(Config); err != nil {
-				cqp.AddLog(cqp.Fatal, "McAugur", fmt.Sprint(err))
+		if os.IsNotExist(err) { // 若文件不存在
+			if data, err = json.Marshal(c); err != nil {
+				return nil, fmt.Errorf("生成配置文件失败: %v", err)
 			}
-			if err = ioutil.WriteFile(".\\conf\\McAugur.json", []byte(data), 0666); err != nil {
-				cqp.AddLog(cqp.Fatal, "McAugur", fmt.Sprint(err))
+			if err = ioutil.WriteFile(filename, data, 0666); err != nil {
+				return nil, fmt.Errorf("创建配置文件失败: %v", err)
 			}
-			cqp.AddLog(cqp.Fatal, "McAugur", "找不到配置文件，已自动添加，请于酷Q目录下conf文件夹中编辑配置文件再开启酷Q")
+			cqp.AddLog(cqp.InfoSuccess, "McAugur", "找不到配置文件，已自动添加，请编辑配置文件再开启酷Q")
 		} else {
-			cqp.AddLog(cqp.Fatal, "McAugur", fmt.Sprint(err))
+			return nil, fmt.Errorf("读取配置文件失败: %v", err)
 		}
 	}
-	err = json.Unmarshal(data, &Config)
+
+	err = json.Unmarshal(data, c)
 	if err != nil {
-		cqp.AddLog(cqp.Fatal, "McAugur", fmt.Sprint(err))
+		return nil, fmt.Errorf("解析配置文件失败: %v", err)
 	}
-	return Config
+	return c, nil
 }
