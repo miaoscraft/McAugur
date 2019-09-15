@@ -37,6 +37,14 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	if fromGroup != config.Group || msg != "算命" {
 		return 0
 	}
+	return augur(fromQQ)
+}
+
+func addInfo(info string) {
+	cqp.AddLog(cqp.Info, "McAugur", info)
+}
+
+func augur(fromQQ int64) int32 {
 	//启动术式
 	hash := md5.New()
 	//将被占卜物代入天命术式
@@ -52,7 +60,7 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	rand.Seed(intdestiny)
 	//占卜获得地点ID
 	placeID := rand.Intn(len(config.Places))
-	result := "在" + config.Places[placeID].Name
+	result := "去" + config.Places[placeID].Name
 	//二次占卜获得事件ID
 	events := config.GeneralEvents
 	events = append(events, config.Places[placeID].PlaceEvents...)
@@ -64,8 +72,4 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	}
 	cqp.SendGroupMsg(config.Group, result)
 	return 0
-}
-
-func addInfo(info string) {
-	cqp.AddLog(cqp.Info, "McAugur", info)
 }
