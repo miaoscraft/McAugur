@@ -55,7 +55,6 @@ func augur(fromQQ int64) int32 {
 	buf := bytes.NewBuffer(destiny)
 	var intdestiny int64
 	binary.Read(buf, binary.LittleEndian, &intdestiny)
-	addInfo(fmt.Sprint(intdestiny))
 	//将翻译过的天命代入占卜公式
 	rand.Seed(intdestiny)
 	//占卜获得地点ID
