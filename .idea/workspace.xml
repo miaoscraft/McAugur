@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="812df8f9-d413-4495-a9a2-fe5281535bb8" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/app.go" afterDir="false" />
-    </list>
+    <list default="true" id="812df8f9-d413-4495-a9a2-fe5281535bb8" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +68,8 @@
     <MESSAGE value="更新SDK，更新顺序版本号" />
     <MESSAGE value="优化术式，修正配置" />
     <MESSAGE value="为占卜师bs戴上护符" />
-    <option name="LAST_COMMIT_MESSAGE" value="为占卜师bs戴上护符" />
+    <MESSAGE value="修正术语" />
+    <option name="LAST_COMMIT_MESSAGE" value="修正术语" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
