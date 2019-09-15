@@ -73,11 +73,15 @@ func augur(fromQQ int64) int32 {
 	hash := md5.New()
 
 	//将被占卜物代入天命术式
-	must(binary.Write(hash, binary.BigEndian, fromQQ)) // never returns a err
 	y, m, d := time.Now().Date()
-	must(binary.Write(hash, binary.BigEndian, y))
-	must(binary.Write(hash, binary.BigEndian, m))
-	must(binary.Write(hash, binary.BigEndian, d))
+	for _, v := range []int64{
+		fromQQ,
+		int64(y),
+		int64(m),
+		int64(d),
+	} {
+		must(binary.Write(hash, binary.BigEndian, v))
+	}
 
 	//用天命开始占卜
 	destiny := hash.Sum(nil) //获取destiny 天命

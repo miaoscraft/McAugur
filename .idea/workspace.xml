@@ -69,7 +69,8 @@
     <MESSAGE value="优化术式，修正配置" />
     <MESSAGE value="为占卜师bs戴上护符" />
     <MESSAGE value="修正术语" />
-    <option name="LAST_COMMIT_MESSAGE" value="修正术语" />
+    <MESSAGE value="更新README" />
+    <option name="LAST_COMMIT_MESSAGE" value="更新README" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
