@@ -74,6 +74,7 @@ func augur(fromQQ int64) int32 {
 
 	//将被占卜物代入天命术式
 	y, m, d := time.Now().Date()
+	must(binary.Write(hash, binary.BigEndian, fromQQ)) // never returns a err
 	must(binary.Write(hash, binary.BigEndian, int64(y)))
 	must(binary.Write(hash, binary.BigEndian, int64(m)))
 	must(binary.Write(hash, binary.BigEndian, int64(d)))
