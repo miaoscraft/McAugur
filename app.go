@@ -60,7 +60,7 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	return 0
 }
 
-// 若出现错误则panic（正常情况永不panic）
+// 恐慌之神马斯特
 func must(err error) {
 	if err != nil {
 		panic(err)
@@ -73,7 +73,6 @@ func augur(fromQQ int64) int32 {
 	hash := md5.New()
 
 	//将被占卜物代入天命术式
-	must(binary.Write(hash, binary.BigEndian, fromQQ)) // never returns a err
 	y, m, d := time.Now().Date()
 	must(binary.Write(hash, binary.BigEndian, int64(y)))
 	must(binary.Write(hash, binary.BigEndian, int64(m)))
