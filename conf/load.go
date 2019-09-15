@@ -22,14 +22,14 @@ type Place struct {
 	PlaceEvents []Event `json:"PlaceEvents"`
 }
 
-//Event is a what will happan and xiong or ji
+//Event is a what will happen and if is good
 type Event struct {
 	Name  string `json:"Name"`
 	Lucky bool   `json:"Lucky"`
 }
 
-//Loadconf is used to load Config
-func Loadconf(filename string) (*Config, error) {
+//LoadConf is used to load Config
+func LoadConf(filename string) (*Config, error) {
 	c := new(Config)
 
 	data, err := ioutil.ReadFile(filename)

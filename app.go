@@ -3,8 +3,10 @@ package main
 import (
 	"crypto/md5"
 	"encoding/binary"
+	"fmt"
 	"math/rand"
 	"path/filepath"
+	"runtime/debug"
 	"time"
 
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
@@ -26,9 +28,19 @@ func init() {
 	cqp.GroupMsg = onGroupMsg
 }
 
+// msc护符
+func talisman() {
+	if r := recover(); r != nil {
+		cqp.AddLog(cqp.Fatal, "McAuger", fmt.Sprintf("%v\n\n%s", r, debug.Stack()))
+	}
+}
+
 func onEnable() int32 {
+	defer talisman()
+
+	// 读取配置
 	filename := filepath.Join(cqp.GetAppDir(), "conf.json")
-	c, err := conf.Loadconf(filename)
+	c, err := conf.LoadConf(filename)
 	if err != nil {
 		cqp.AddLog(cqp.Error, "McAuger", err.Error())
 	} else {
@@ -39,14 +51,13 @@ func onEnable() int32 {
 }
 
 func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, msg string, font int32) int32 {
-	if fromGroup != config.Group || msg != "算命" {
-		return 0
-	}
-	return augur(fromQQ)
-}
+	defer talisman()
 
-func addInfo(info string) {
-	cqp.AddLog(cqp.Info, "McAugur", info)
+	if fromGroup == config.Group && msg == "算命" {
+		return augur(fromQQ)
+	}
+
+	return 0
 }
 
 // 若出现错误则panic（正常情况永不panic）
@@ -56,6 +67,7 @@ func must(err error) {
 	}
 }
 
+// 占卜术式
 func augur(fromQQ int64) int32 {
 	//启动术式
 	hash := md5.New()
@@ -71,18 +83,20 @@ func augur(fromQQ int64) int32 {
 	destiny := hash.Sum(nil) //获取destiny 天命
 	rand.Seed(int64(binary.BigEndian.Uint64(destiny)))
 
-	//占卜获得地点ID
+	//占卜获得以太坐标
 	placeID := rand.Intn(len(config.Places))
 	result := "去" + config.Places[placeID].Name
 
-	//二次占卜获得事件ID
+	//占卜具体细节
 	events := append(config.GeneralEvents, config.Places[placeID].PlaceEvents...)
-	EventID := rand.Intn(len(events))
-	if events[EventID].Lucky == true {
-		result = "今日 吉：" + result + events[EventID].Name
+	e := events[rand.Intn(len(events))]
+
+	if e.Lucky {
+		result = "今日 吉：" + result + e.Name
 	} else {
-		result = "今日 凶：" + result + events[EventID].Name
+		result = "今日 凶：" + result + e.Name
 	}
+
 	cqp.SendGroupMsg(config.Group, result)
 	return 0
 }

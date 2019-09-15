@@ -70,7 +70,8 @@
     <MESSAGE value="更新到新版SDK" />
     <MESSAGE value="更新SDK" />
     <MESSAGE value="更新SDK，更新顺序版本号" />
-    <option name="LAST_COMMIT_MESSAGE" value="更新SDK，更新顺序版本号" />
+    <MESSAGE value="优化术式，修正配置" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化术式，修正配置" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
