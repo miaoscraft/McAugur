@@ -103,7 +103,7 @@ func augur(fromQQ int64) int32 {
 	case luckindex > 45 && luckindex <= 55:
 		result += "今日 平，无特殊事件"
 	case luckindex >= 55 && luckindex <= 85:
-		result += "今日吉\n"
+		result += "今日 吉\n"
 		result += "去" + config.Places[placeID].Name + goodevents[rand.Intn(len(goodevents))] + "\n"
 		result += "但是要注意" + badevents[rand.Intn(len(badevents))]
 	case luckindex > 85:
