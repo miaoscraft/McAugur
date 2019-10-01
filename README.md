@@ -2,9 +2,9 @@
 Minecraft服务器QQ群算命/占卜插件
 
 ## 开始
-release里面有打包好的
-自己拿去用就是了
-
+这是一个SiS的附属插件，用到了SiS的数据库（仅支持MySQL）
+如果要体验完整功能首先要安装SiS然后自行编译
+release里的是独立版本的算命不需要SiS，但是功能有一定的残缺
 ## 配置文件
 第一次使用会自动生成配置文件，请编辑这个配置文件添加想要的事件
 这是一个示例配置文件
@@ -62,9 +62,9 @@ release里面有打包好的
         "会被服务器延时卡进墙壁闷死"
     ],
     "Group": 000000000
+    "Source":用户:密码@tcp(地址:端口)/库名
 }
 ```
-
 ## 感谢
 [BaiMeow](https://github.com/MscBaiMeow)（插件作者）
 [Tnze](https://github.com/Tnze)（SDK开发者）
