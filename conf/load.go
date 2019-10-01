@@ -15,6 +15,7 @@ type Config struct {
 	GoodEvents []string `json:"GoodEvents"`
 	BadEvents  []string `json:"BadEvents"`
 	Group      int64    `json:"Group"`
+	Source     string   `json:"Source"`
 }
 
 //Place is a type to display places

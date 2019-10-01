@@ -11,6 +11,7 @@ import (
 
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
 	"github.com/miaoscraft/McAugur/conf"
+	"github.com/miaoscraft/McAugur/data"
 )
 
 //go:generate cqcfg -c .
@@ -26,6 +27,7 @@ func init() {
 	cqp.AppID = "cn.miaoscraft.mcaugur"
 	cqp.Enable = onEnable
 	cqp.GroupMsg = onGroupMsg
+	cqp.GroupMemberIncrease = onGroupMemberIncrease
 }
 
 // msc护符
@@ -46,17 +48,21 @@ func onEnable() int32 {
 	} else {
 		config = *c
 	}
-
+	if err = data.Open(config.Source); err != nil {
+		cqp.AddLog(cqp.Error, "McAuger", err.Error())
+	}
 	return 0
 }
 
 func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, msg string, font int32) int32 {
 	defer talisman()
-
-	if fromGroup == config.Group && msg == "算命" {
+	switch {
+	case fromGroup == config.Group && msg == "算命":
 		return augur(fromQQ)
-	}
 
+	case fromGroup == config.Group:
+		return 0
+	}
 	return 0
 }
 
@@ -71,10 +77,19 @@ func must(err error) {
 func augur(fromQQ int64) int32 {
 	//启动术式
 	hash := md5.New()
-
+	name, err := data.QQGetName(fromQQ)
+	if err != nil {
+		cqp.AddLog(cqp.Info, "McAuger", err.Error())
+		cqp.SendGroupMsg(config.Group, "算命大失败")
+		return 0
+	}
+	if name == "" {
+		cqp.SendGroupMsg(config.Group, "你莫得白名单算什么命")
+		return 0
+	}
 	//将被占卜物代入天命术式
 	y, m, d := time.Now().Date()
-	must(binary.Write(hash, binary.BigEndian, fromQQ)) // never returns a err
+	must(binary.Write(hash, binary.BigEndian, fromQQ+8)) // never returns a err
 	must(binary.Write(hash, binary.BigEndian, int64(y)))
 	must(binary.Write(hash, binary.BigEndian, int64(m)))
 	must(binary.Write(hash, binary.BigEndian, int64(d)))
@@ -85,7 +100,7 @@ func augur(fromQQ int64) int32 {
 
 	//占卜获得以太坐标与幸运指数
 	luckindex := rand.Intn(100) + 1
-	result := fmt.Sprintf("大佬今天的仙气值（1-100）为 %d\n", luckindex)
+	result := fmt.Sprintf("%s今天的仙气值（1-100）为 %d\n", name, luckindex)
 	placeID := rand.Intn(len(config.Places))
 
 	//占卜具体细节
@@ -93,13 +108,13 @@ func augur(fromQQ int64) int32 {
 	badevents := append(config.BadEvents, config.Places[placeID].BadEvents...)
 	switch {
 	case luckindex <= 15:
-		result += "今日 凶\n"
-		result += "去" + config.Places[placeID].Name + badevents[rand.Intn(len(badevents))] + "\n"
-		result += "接受审判吧"
+		result += "今日 大凶\n"
+		result += "去" + config.Places[placeID].Name + "不但" + badevents[rand.Intn(len(badevents))] + "\n"
+		result += "而且" + badevents[rand.Intn(len(badevents))]
 	case luckindex > 15 && luckindex <= 45:
 		result += "今日 凶\n"
 		result += "去" + config.Places[placeID].Name + badevents[rand.Intn(len(badevents))] + "\n"
-		result += "不过呢" + badevents[rand.Intn(len(badevents))]
+		result += "不过呢" + goodevents[rand.Intn(len(goodevents))]
 	case luckindex > 45 && luckindex <= 55:
 		result += "今日 平，无特殊事件"
 	case luckindex >= 55 && luckindex <= 85:
@@ -107,11 +122,31 @@ func augur(fromQQ int64) int32 {
 		result += "去" + config.Places[placeID].Name + goodevents[rand.Intn(len(goodevents))] + "\n"
 		result += "但是要注意" + badevents[rand.Intn(len(badevents))]
 	case luckindex > 85:
-		result += "今日 吉\n"
+		result += "今日 大吉大利\n"
 		result += "去" + config.Places[placeID].Name + goodevents[rand.Intn(len(goodevents))] + "\n"
-		result += "不会发生不幸的事情的"
+		result += "Today is your day!"
 	}
 
 	cqp.SendGroupMsg(config.Group, result)
+	return 0
+}
+
+//给新群员占卜刷一下存在感
+func onGroupMemberIncrease(subType, sendTime int32, fromGroup, fromQQ, beingOperateQQ int64) int32 {
+	if fromGroup != config.Group {
+		return 0
+	}
+
+	hash := md5.New()
+	must(binary.Write(hash, binary.BigEndian, int64(beingOperateQQ)))
+	//用天命开始占卜
+	destiny := hash.Sum(nil) //获取destiny 天命
+	rand.Seed(int64(binary.BigEndian.Uint64(destiny)))
+
+	cqp.SendGroupMsg(config.Group, "欢迎新大佬\n我看你骨骼精奇，适合加入"+config.Places[rand.Intn(len(config.Places))].Name)
+	return 0
+}
+
+func addEvents() int32 {
 	return 0
 }
