@@ -8,8 +8,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
-
 	//mysql
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
@@ -21,9 +19,6 @@ var db *sql.DB
 func Open(source string) error {
 	var err error
 	db, err = sql.Open("mysql", source)
-	if err == nil {
-		cqp.AddLog(cqp.Info, "McAuger", "成功连接数据库")
-	}
 	return err
 }
 
@@ -63,6 +58,9 @@ func QQGetName(qq int64) (string, error) {
 		return "", fmt.Errorf("获取UUID失败:%v", err)
 	}
 	name, err := IDGetName(id)
+	if err != nil {
+		return "", fmt.Errorf("获取Name失败: %v", err)
+	}
 	return name, err
 }
 

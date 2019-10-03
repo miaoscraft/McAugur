@@ -11,24 +11,26 @@ import (
 
 //Config is used to restore loaded config in McAugur
 type Config struct {
-	Places     []Place  `json:"Places"`
-	GoodEvents []string `json:"GoodEvents"`
-	BadEvents  []string `json:"BadEvents"`
-	Group      int64    `json:"Group"`
-	Source     string   `json:"Source"`
+	Places     []Place `json:"Places"`
+	GoodEvents []Event `json:"GoodEvents"`
+	BadEvents  []Event `json:"BadEvents"`
+	Group      int64   `json:"Group"`
+	Source     string  `json:"Source"`
+	Server     string  `json:"Server"`
+	PassWd     string  `json:"PassWd"`
 }
 
 //Place is a type to display places
 type Place struct {
-	Name       string   `json:"Name"`
-	GoodEvents []string `json:"GoodEvents"`
-	BadEvents  []string `json:"BadEvents"`
+	Name       string  `json:"Name"`
+	GoodEvents []Event `json:"GoodEvents"`
+	BadEvents  []Event `json:"BadEvents"`
 }
 
-//Events includes two type of events
-type Events struct {
-	GoodEvents []string `json:"GoodEvents"`
-	BadEvents  []string `json:"BadEvents"`
+//Event includes events and Cmd
+type Event struct {
+	Name string `json:"Name"`
+	Cmd  string `json:"Cmd"`
 }
 
 //LoadConf is used to load Config

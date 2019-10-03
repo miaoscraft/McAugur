@@ -12,6 +12,7 @@ import (
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
 	"github.com/miaoscraft/McAugur/conf"
 	"github.com/miaoscraft/McAugur/data"
+	"github.com/miaoscraft/McAugur/rcon"
 )
 
 //go:generate cqcfg -c .
@@ -51,6 +52,11 @@ func onEnable() int32 {
 	if err = data.Open(config.Source); err != nil {
 		cqp.AddLog(cqp.Error, "McAuger", err.Error())
 	}
+	cqp.AddLog(cqp.Info, "McAuger", "成功连接数据库")
+	if err = rcon.Open(config.Server, config.PassWd); err != nil {
+		cqp.AddLog(cqp.Error, "McAuger", err.Error())
+	}
+	cqp.AddLog(cqp.Info, "McAuger", "成功连接RCON")
 	return 0
 }
 
@@ -59,9 +65,8 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	switch {
 	case fromGroup == config.Group && msg == "算命":
 		return augur(fromQQ)
-
-	case fromGroup == config.Group:
-		return 0
+	case fromGroup == config.Group && msg == "/mcaugur reload" && fromQQ == 1098105012:
+		onEnable()
 	}
 	return 0
 }
@@ -84,12 +89,13 @@ func augur(fromQQ int64) int32 {
 		return 0
 	}
 	if name == "" {
-		cqp.SendGroupMsg(config.Group, "你莫得白名单算什么命")
+		cqp.SendGroupMsg(config.Group, "Wait!!!")
 		return 0
 	}
 	//将被占卜物代入天命术式
 	y, m, d := time.Now().Date()
-	must(binary.Write(hash, binary.BigEndian, fromQQ+8)) // never returns a err
+	_, err = hash.Write([]byte(name)) // never returns a err
+	must(err)
 	must(binary.Write(hash, binary.BigEndian, int64(y)))
 	must(binary.Write(hash, binary.BigEndian, int64(m)))
 	must(binary.Write(hash, binary.BigEndian, int64(d)))
@@ -109,25 +115,46 @@ func augur(fromQQ int64) int32 {
 	switch {
 	case luckindex <= 15:
 		result += "今日 大凶\n"
-		result += "去" + config.Places[placeID].Name + "不但" + badevents[rand.Intn(len(badevents))] + "\n"
-		result += "而且" + badevents[rand.Intn(len(badevents))]
+		result1 := rand.Intn(len(badevents))
+		result2 := rand.Intn(len(badevents))
+		result += "去" + config.Places[placeID].Name + "不但" + badevents[result1].Name + "\n"
+		result += "而且" + badevents[result2].Name
+		runcmd(fmt.Sprintf(badevents[result1].Cmd, name))
+		runcmd(fmt.Sprintf(badevents[result2].Cmd, name))
+
 	case luckindex > 15 && luckindex <= 45:
 		result += "今日 凶\n"
-		result += "去" + config.Places[placeID].Name + badevents[rand.Intn(len(badevents))] + "\n"
-		result += "不过呢" + goodevents[rand.Intn(len(goodevents))]
+		result1 := rand.Intn(len(badevents))
+		result2 := rand.Intn(len(goodevents))
+		result += "去" + config.Places[placeID].Name + badevents[result1].Name + "\n"
+		result += "不过呢" + goodevents[result2].Name
+		runcmd(fmt.Sprintf(badevents[result1].Cmd, name))
+		runcmd(fmt.Sprintf(badevents[result2].Cmd, name))
+
 	case luckindex > 45 && luckindex <= 55:
 		result += "今日 平，无特殊事件"
+
 	case luckindex >= 55 && luckindex <= 85:
 		result += "今日 吉\n"
-		result += "去" + config.Places[placeID].Name + goodevents[rand.Intn(len(goodevents))] + "\n"
-		result += "但是要注意" + badevents[rand.Intn(len(badevents))]
+		result1 := rand.Intn(len(goodevents))
+		result2 := rand.Intn(len(badevents))
+		result += "去" + config.Places[placeID].Name + goodevents[result1].Name + "\n"
+		result += "但是要注意" + badevents[result2].Name
+
+		runcmd(fmt.Sprintf(goodevents[result1].Cmd, name))
+		runcmd(fmt.Sprintf(badevents[result2].Cmd, name))
+
 	case luckindex > 85:
 		result += "今日 大吉大利\n"
-		result += "去" + config.Places[placeID].Name + goodevents[rand.Intn(len(goodevents))] + "\n"
+		result1 := rand.Intn(len(goodevents))
+		result += "去" + config.Places[placeID].Name + goodevents[result1].Name + "\n"
 		result += "Today is your day!"
+		runcmd(fmt.Sprintf(goodevents[result1].Cmd, name))
+
 	}
 
 	cqp.SendGroupMsg(config.Group, result)
+
 	return 0
 }
 
@@ -149,4 +176,13 @@ func onGroupMemberIncrease(subType, sendTime int32, fromGroup, fromQQ, beingOper
 
 func addEvents() int32 {
 	return 0
+}
+
+func runcmd(cmd string) {
+	cqp.AddLog(cqp.Info, "McAuger", cmd)
+	resp, err := rcon.Cmd(cmd)
+	if err != nil {
+		cqp.AddLog(cqp.Error, "McAuger", err.Error())
+	}
+	cqp.AddLog(cqp.Info, "McAuger", resp)
 }
