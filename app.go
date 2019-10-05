@@ -115,41 +115,41 @@ func augur(fromQQ int64) int32 {
 	switch {
 	case luckindex <= 15:
 		result += "今日 大凶\n"
-		result1 := rand.Intn(len(badevents))
-		result2 := rand.Intn(len(badevents))
-		result += "去" + config.Places[placeID].Name + "不但" + badevents[result1].Name + "\n"
-		result += "而且" + badevents[result2].Name
-		runcmd(fmt.Sprintf(badevents[result1].Cmd, name))
-		runcmd(fmt.Sprintf(badevents[result2].Cmd, name))
+		result1 := badevents[rand.Intn(len(badevents))]
+		result2 := badevents[rand.Intn(len(badevents))]
+		result += "去" + config.Places[placeID].Name + "不但" + result1.Name + "\n"
+		result += "而且" + result2.Name
+		runcmd(fmt.Sprintf(result1.Cmd, name))
+		runcmd(fmt.Sprintf(result2.Cmd, name))
 
 	case luckindex > 15 && luckindex <= 45:
 		result += "今日 凶\n"
-		result1 := rand.Intn(len(badevents))
-		result2 := rand.Intn(len(goodevents))
-		result += "去" + config.Places[placeID].Name + badevents[result1].Name + "\n"
-		result += "不过呢" + goodevents[result2].Name
-		runcmd(fmt.Sprintf(badevents[result1].Cmd, name))
-		runcmd(fmt.Sprintf(badevents[result2].Cmd, name))
+		result1 := badevents[rand.Intn(len(badevents))]
+		result2 := goodevents[rand.Intn(len(goodevents))]
+		result += "去" + config.Places[placeID].Name + result1.Name + "\n"
+		result += "不过呢" + result2.Name
+		runcmd(fmt.Sprintf(result1.Cmd, name))
+		runcmd(fmt.Sprintf(result2.Cmd, name))
 
 	case luckindex > 45 && luckindex <= 55:
 		result += "今日 平，无特殊事件"
 
 	case luckindex >= 55 && luckindex <= 85:
 		result += "今日 吉\n"
-		result1 := rand.Intn(len(goodevents))
-		result2 := rand.Intn(len(badevents))
-		result += "去" + config.Places[placeID].Name + goodevents[result1].Name + "\n"
-		result += "但是要注意" + badevents[result2].Name
+		result1 := goodevents[rand.Intn(len(goodevents))]
+		result2 := badevents[rand.Intn(len(badevents))]
+		result += "去" + config.Places[placeID].Name + result1.Name + "\n"
+		result += "但是要注意" + result2.Name
 
-		runcmd(fmt.Sprintf(goodevents[result1].Cmd, name))
-		runcmd(fmt.Sprintf(badevents[result2].Cmd, name))
+		runcmd(fmt.Sprintf(result1.Cmd, name))
+		runcmd(fmt.Sprintf(result2.Cmd, name))
 
 	case luckindex > 85:
 		result += "今日 大吉大利\n"
-		result1 := rand.Intn(len(goodevents))
-		result += "去" + config.Places[placeID].Name + goodevents[result1].Name + "\n"
+		result1 := goodevents[rand.Intn(len(goodevents))]
+		result += "去" + config.Places[placeID].Name + result1.Name + "\n"
 		result += "Today is your day!"
-		runcmd(fmt.Sprintf(goodevents[result1].Cmd, name))
+		runcmd(fmt.Sprintf(result1.Cmd, name))
 
 	}
 
