@@ -23,6 +23,7 @@ import (
 func main() { /*此处应当留空*/ }
 
 var config conf.Config
+var clear = make(chan bool)
 
 func init() {
 	cqp.AppID = "cn.miaoscraft.mcaugur"
@@ -59,6 +60,7 @@ func onEnable() int32 {
 	} else {
 		cqp.AddLog(cqp.Info, "McAuger", "成功连接RCON")
 	}
+	go reset()
 	return 0
 }
 
@@ -71,6 +73,9 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	case fromGroup == config.Group && msg == "/mcaugur reload" && fromQQ == 1098105012:
 		onEnable()
 		cqp.SendGroupMsg(config.Group, "Reload Completely")
+
+	case fromGroup == config.Group && msg == "/mcaugur clear" && fromQQ == 1098105012:
+		clear <- true
 	}
 	return 0
 }
@@ -123,8 +128,8 @@ func augur(fromQQ int64) int32 {
 		result2 := badevents[rand.Intn(len(badevents))]
 		result += "去" + config.Places[placeID].Name + "不但" + result1.Name + "\n"
 		result += "而且" + result2.Name
-		runcmd(fmt.Sprintf(result1.Cmd, name))
-		runcmd(fmt.Sprintf(result2.Cmd, name))
+		runCmd(fmt.Sprintf(result1.Cmd, name))
+		runCmd(fmt.Sprintf(result2.Cmd, name))
 
 	case luckindex > 15 && luckindex <= 45:
 		result += "今日 凶\n"
@@ -132,8 +137,8 @@ func augur(fromQQ int64) int32 {
 		result2 := goodevents[rand.Intn(len(goodevents))]
 		result += "去" + config.Places[placeID].Name + result1.Name + "\n"
 		result += "不过呢" + result2.Name
-		runcmd(fmt.Sprintf(result1.Cmd, name))
-		runcmd(fmt.Sprintf(result2.Cmd, name))
+		runCmd(fmt.Sprintf(result1.Cmd, name))
+		runCmd(fmt.Sprintf(result2.Cmd, name))
 
 	case luckindex > 45 && luckindex <= 55:
 		result += "今日 平，无特殊事件"
@@ -145,20 +150,19 @@ func augur(fromQQ int64) int32 {
 		result += "去" + config.Places[placeID].Name + result1.Name + "\n"
 		result += "但是要注意" + result2.Name
 
-		runcmd(fmt.Sprintf(result1.Cmd, name))
-		runcmd(fmt.Sprintf(result2.Cmd, name))
+		runCmd(fmt.Sprintf(result1.Cmd, name))
+		runCmd(fmt.Sprintf(result2.Cmd, name))
 
 	case luckindex > 85:
 		result += "今日 大吉大利\n"
 		result1 := goodevents[rand.Intn(len(goodevents))]
 		result += "去" + config.Places[placeID].Name + result1.Name + "\n"
 		result += "Today is your day!"
-		runcmd(fmt.Sprintf(result1.Cmd, name))
+		runCmd(fmt.Sprintf(result1.Cmd, name))
 
 	}
 
 	cqp.SendGroupMsg(config.Group, result)
-
 	return 0
 }
 
@@ -182,11 +186,31 @@ func addEvents() int32 {
 	return 0
 }
 
-func runcmd(cmd string) {
+func runCmd(cmd string) {
 	cqp.AddLog(cqp.Info, "McAuger", cmd)
 	resp, err := rcon.Cmd(cmd)
 	if err != nil {
 		cqp.AddLog(cqp.Error, "McAuger", err.Error())
 	}
 	cqp.AddLog(cqp.Info, "McAuger", resp)
+}
+
+func reset() {
+	timeNext := time.Date(time.Now().Year(), time.Now().Month(), time.Now().AddDate(0, 0, 1).Day(), 0, 0, 0, 0, time.Now().Location())
+	t := time.NewTimer(timeNext.Sub(time.Now()))
+	for {
+		select {
+		case <-t.C:
+			for _, v := range config.ResetCmds {
+				runCmd(v)
+			}
+			go reset()
+			break
+		case <-clear:
+			for _, v := range config.ResetCmds {
+				runCmd(v)
+			}
+			cqp.SendGroupMsg(config.Group, "Clear Completely")
+		}
+	}
 }
