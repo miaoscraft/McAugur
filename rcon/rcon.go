@@ -19,8 +19,5 @@ func Cmd(cmd string) (resp string, err error) {
 		return
 	}
 	resp, err = conn.Resp()
-	if err != nil {
-		return
-	}
 	return
 }

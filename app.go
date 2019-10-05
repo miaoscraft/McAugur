@@ -51,22 +51,26 @@ func onEnable() int32 {
 	}
 	if err = data.Open(config.Source); err != nil {
 		cqp.AddLog(cqp.Error, "McAuger", err.Error())
+	} else {
+		cqp.AddLog(cqp.Info, "McAuger", "成功连接数据库")
 	}
-	cqp.AddLog(cqp.Info, "McAuger", "成功连接数据库")
 	if err = rcon.Open(config.Server, config.PassWd); err != nil {
 		cqp.AddLog(cqp.Error, "McAuger", err.Error())
+	} else {
+		cqp.AddLog(cqp.Info, "McAuger", "成功连接RCON")
 	}
-	cqp.AddLog(cqp.Info, "McAuger", "成功连接RCON")
 	return 0
 }
 
 func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, msg string, font int32) int32 {
 	defer talisman()
+
 	switch {
 	case fromGroup == config.Group && msg == "算命":
 		return augur(fromQQ)
 	case fromGroup == config.Group && msg == "/mcaugur reload" && fromQQ == 1098105012:
 		onEnable()
+		cqp.SendGroupMsg(config.Group, "Reload Completely")
 	}
 	return 0
 }
