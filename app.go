@@ -89,6 +89,7 @@ func must(err error) {
 
 // 占卜术式
 func augur(fromQQ int64) int32 {
+	defer talisman()
 	//启动术式
 	hash := md5.New()
 	name, err := data.QQGetName(fromQQ)
@@ -196,21 +197,25 @@ func runCmd(cmd string) {
 }
 
 func reset() {
-	timeNext := time.Date(time.Now().Year(), time.Now().Month(), time.Now().AddDate(0, 0, 1).Day(), 0, 0, 0, 0, time.Now().Location())
-	t := time.NewTimer(timeNext.Sub(time.Now()))
+	now := time.Now()
+	next := now.Add(time.Hour * 24)
+	next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
+	t := time.NewTimer(next.Sub(now))
 	for {
 		select {
 		case <-t.C:
 			for _, v := range config.ResetCmds {
 				runCmd(v)
 			}
+			cqp.SendGroupMsg(config.Group, "清除已有算命效果完成")
+			time.Sleep(time.Minute)
 			go reset()
 			break
 		case <-clear:
 			for _, v := range config.ResetCmds {
 				runCmd(v)
 			}
-			cqp.SendGroupMsg(config.Group, "Clear Completely")
+			cqp.SendGroupMsg(config.Group, "清除已有算命效果完成")
 		}
 	}
 }
