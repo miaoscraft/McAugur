@@ -60,7 +60,7 @@ func onEnable() int32 {
 	} else {
 		cqp.AddLog(cqp.Info, "McAuger", "成功连接RCON")
 	}
-	go reset()
+	go rmeff()
 	return 0
 }
 
@@ -116,12 +116,12 @@ func augur(fromQQ int64) int32 {
 
 	//占卜获得以太坐标与幸运指数
 	luckindex := rand.Intn(100) + 1
-	result := fmt.Sprintf("%s今天的仙气值（1-100）为 %d\n", name, luckindex)
 	placeID := rand.Intn(len(config.Places))
 
 	//占卜具体细节
 	goodevents := append(config.GoodEvents, config.Places[placeID].GoodEvents...)
 	badevents := append(config.BadEvents, config.Places[placeID].BadEvents...)
+	result := fmt.Sprintf("%s今天的仙气值（1-100）为 %d\n", name, luckindex)
 	switch {
 	case luckindex <= 15:
 		result += "今日 大凶\n"
@@ -202,11 +202,11 @@ func runCmd(cmd string) {
 	cqp.AddLog(cqp.Info, "McAuger", resp)
 }
 
-func reset() {
-	now := time.Now()
-	next := now.Add(time.Hour * 24)
+//清除算命效果
+func rmeff() {
+	next := time.Now().Add(time.Hour * 24)
 	next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
-	t := time.NewTimer(next.Sub(now))
+	t := time.NewTimer(next.Sub(time.Now()))
 	for {
 		select {
 		case <-t.C:
@@ -215,8 +215,9 @@ func reset() {
 			}
 			cqp.SendGroupMsg(config.Group, "清除已有算命效果完成")
 			time.Sleep(time.Minute)
-			go reset()
-			break
+			next := time.Now().Add(time.Hour * 24)
+			next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
+			t = time.NewTimer(next.Sub(time.Now()))
 		case <-clear:
 			for _, v := range config.ResetCmds {
 				runCmd(v)
