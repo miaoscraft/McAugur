@@ -192,12 +192,7 @@ func runCmd(cmd string) {
 	resp, err := rcon.Cmd(cmd)
 	if err != nil {
 		cqp.AddLog(cqp.Error, "McAuger", err.Error())
-		//再次尝试连接
-		if err := rcon.Open(config.Server, config.PassWd); err != nil {
-			cqp.SendGroupMsg(config.Group, "连接服务器失败，算命效果可能无法实装")
-			return
-		}
-		cqp.AddLog(cqp.Info, "McAuger", cmd)
+		cqp.SendGroupMsg(config.Group, "连接服务器失败，算命效果可能无法实装")
 	}
 	cqp.AddLog(cqp.Info, "McAuger", resp)
 }

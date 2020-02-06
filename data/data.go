@@ -72,7 +72,7 @@ func get(url string) (io.ReadCloser, int, error) {
 	}
 
 	// Golang默认的User-agent被屏蔽了
-	request.Header.Set("User-agent", "SiS")
+	request.Header.Set("User-agent", "McAugur")
 
 	// 发送Get请求
 	resp, err := new(http.Client).Do(request)

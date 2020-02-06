@@ -1,8 +1,7 @@
 github.com/Tnze/CoolQ-Golang-SDK v0.0.0-20190906155035-a38d5b2d919b h1:BglVhz6H6+tHQPyz4cq7e8nqZVe9j/FHFaK7HTcsjTE=
 github.com/Tnze/CoolQ-Golang-SDK v0.0.0-20190906155035-a38d5b2d919b/go.mod h1:XIWgI6JgLDdHQVN7a2Zegsp5ucwP071+8enN2emd0zg=
-github.com/Tnze/go-mc v1.14.3 h1:qcKDQtFhcG3VtAkbai1T7Zmrq8I97vUWoUaGeD8yZkY=
-github.com/Tnze/go-mc v1.14.4-0.20190910013332-7d31acbb4836 h1:brl269lnFMs4MpFRUcB89OzST7T95T4GLwadKanRMfU=
-github.com/Tnze/go-mc v1.14.4-0.20190910013332-7d31acbb4836/go.mod h1:ZQpDcppzIn7X37rsk39CAL4C7nkmu4sxWvDpcy9pncc=
+github.com/Tnze/go-mc v1.15.2-0.20200129055757-72c389c86fc2 h1:0l6JxUSwcrZthaKm0VMb09jcocuJVXQQYIE8+i28QgY=
+github.com/Tnze/go-mc v1.15.2-0.20200129055757-72c389c86fc2/go.mod h1:ZQpDcppzIn7X37rsk39CAL4C7nkmu4sxWvDpcy9pncc=
 github.com/go-sql-driver/mysql v1.4.1 h1:g24URVg0OFbNUTx9qqY1IRZ9D9z3iPyi5zKhQZpNwpA=
 github.com/go-sql-driver/mysql v1.4.1/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
 github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=
