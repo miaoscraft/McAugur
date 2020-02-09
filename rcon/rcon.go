@@ -4,12 +4,12 @@ import "github.com/Tnze/go-mc/net"
 
 var (
 	conn         net.RCONClientConn
-	Addr, Passwd string
+	addr, passwd string
 )
 
 //Open a rcon connection
-func Open(addr, passwd string) error {
-	Addr, Passwd = addr, passwd
+func Open(addr1, passwd1 string) error {
+	addr, passwd = addr1, passwd1
 	conn, err := net.DialRCON(addr, passwd)
 	if err != nil {
 		return err
