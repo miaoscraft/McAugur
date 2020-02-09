@@ -23,7 +23,7 @@ func Cmd(cmd string) (resp string, err error) {
 	if cmd == "" {
 		return
 	}
-	conn, err = net.DialRCON(Addr, Passwd)
+	conn, err = net.DialRCON(addr, passwd)
 	if err != nil {
 		return
 	}
