@@ -8,14 +8,14 @@ var (
 )
 
 //Open a rcon connection
-func Open(addr, passwd string) (err error) {
+func Open(addr, passwd string) error {
 	Addr, Passwd = addr, passwd
-	conn, err = net.DialRCON(addr, passwd)
+	conn, err := net.DialRCON(addr, passwd)
 	if err != nil {
-		return
+		return err
 	}
 	conn.(*net.RCONConn).Close()
-	return
+	return nil
 }
 
 //Cmd run a minecraft command on the server
