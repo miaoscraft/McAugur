@@ -212,7 +212,7 @@ func rmeff() {
 			time.Sleep(time.Minute)
 			next := time.Now().Add(time.Hour * 24)
 			next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
-			t = time.NewTimer(next.Sub(time.Now()))
+			t.Reset(next.Sub(time.Now()))
 		case <-clear:
 			for _, v := range config.ResetCmds {
 				runCmd(v)
