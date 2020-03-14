@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/binary"
 	"fmt"
@@ -28,6 +29,7 @@ var clear = make(chan bool)
 func init() {
 	cqp.AppID = "cn.miaoscraft.mcaugur"
 	cqp.Enable = onEnable
+	cqp.Disable = onDisable
 	cqp.GroupMsg = onGroupMsg
 	cqp.GroupMemberIncrease = onGroupMemberIncrease
 }
@@ -38,6 +40,8 @@ func talisman() {
 		cqp.AddLog(cqp.Fatal, "McAuger", fmt.Sprintf("%v\n\n%s", r, debug.Stack()))
 	}
 }
+
+var cancelRM func()
 
 func onEnable() int32 {
 	defer talisman()
@@ -60,7 +64,16 @@ func onEnable() int32 {
 	} else {
 		cqp.AddLog(cqp.Info, "McAuger", "成功连接RCON")
 	}
-	go rmeff()
+
+	ctx, cancel := context.WithCancel(context.TODO())
+	cancelRM = cancel // 认为Enable和Disable不会同时发生
+	go cleanEff(ctx)
+
+	return 0
+}
+
+func onDisable() int32 {
+	cancelRM()
 	return 0
 }
 
@@ -198,26 +211,30 @@ func runCmd(cmd string) {
 }
 
 //清除算命效果
-func rmeff() {
-	next := time.Now().Add(time.Hour * 24)
-	next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
-	t := time.NewTimer(next.Sub(time.Now()))
+func cleanEff(ctx context.Context) {
+	now := time.Now()
+	clean := func() {
+		for _, v := range config.ResetCmds {
+			runCmd(v)
+		}
+		cqp.SendGroupMsg(config.Group, "清除已有算命效果完成")
+	}
+	// 等待12点
+	select {
+	case <-time.After(time.Until(time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()))):
+		clean()
+	case <-ctx.Done():
+		return
+	}
+
+	timer := time.NewTicker(time.Hour * 24)
+	defer timer.Stop()
 	for {
 		select {
-		case <-t.C:
-			for _, v := range config.ResetCmds {
-				runCmd(v)
-			}
-			cqp.SendGroupMsg(config.Group, "清除已有算命效果完成")
-			time.Sleep(time.Minute)
-			next := time.Now().Add(time.Hour * 24)
-			next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
-			t.Reset(next.Sub(time.Now()))
-		case <-clear:
-			for _, v := range config.ResetCmds {
-				runCmd(v)
-			}
-			cqp.SendGroupMsg(config.Group, "清除已有算命效果完成")
+		case <-timer.C:
+			clean()
+		case <-ctx.Done():
+			return
 		}
 	}
 }
