@@ -24,12 +24,17 @@ func main() { /*此处应当留空*/ }
 
 var config conf.Config
 var clear = make(chan bool)
+var exit chan bool
 
 func init() {
+
 	cqp.AppID = "cn.miaoscraft.mcaugur"
+
 	cqp.Enable = onEnable
 	cqp.GroupMsg = onGroupMsg
 	cqp.GroupMemberIncrease = onGroupMemberIncrease
+	cqp.Disable = onDisable
+
 }
 
 // msc护符
@@ -60,7 +65,13 @@ func onEnable() int32 {
 	} else {
 		cqp.AddLog(cqp.Info, "McAuger", "成功连接RCON")
 	}
-	go rmeff()
+	exit = make(chan bool)
+	go rmeff(exit)
+	return 0
+}
+
+func onDisable() int32 {
+	exit <- true
 	return 0
 }
 
@@ -71,6 +82,7 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	case fromGroup == config.Group && msg == "算命":
 		return augur(fromQQ)
 	case fromGroup == config.Group && msg == "/mcaugur reload" && fromQQ == 1098105012:
+		onDisable()
 		onEnable()
 		cqp.SendGroupMsg(config.Group, "Reload Completely")
 
@@ -198,7 +210,7 @@ func runCmd(cmd string) {
 }
 
 //清除算命效果
-func rmeff() {
+func rmeff(exit chan bool) {
 	next := time.Now().Add(time.Hour * 24)
 	next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
 	t := time.NewTimer(next.Sub(time.Now()))
@@ -218,6 +230,9 @@ func rmeff() {
 				runCmd(v)
 			}
 			cqp.SendGroupMsg(config.Group, "清除已有算命效果完成")
+		case <-exit:
+			t.Stop()
+			return
 		}
 	}
 }
