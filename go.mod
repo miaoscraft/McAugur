@@ -7,4 +7,5 @@ require (
 	github.com/Tnze/go-mc v1.15.2-0.20200129055757-72c389c86fc2
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/google/uuid v1.1.1
+	google.golang.org/appengine v1.6.5 // indirect
 )
