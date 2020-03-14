@@ -35,7 +35,6 @@ func init() {
 	cqp.Disable = onDisable
 	cqp.GroupMsg = onGroupMsg
 	cqp.GroupMemberIncrease = onGroupMemberIncrease
-	cqp.Disable = onDisable
 
 }
 
