@@ -226,7 +226,7 @@ func cleanEff(ctx context.Context) {
 	}
 	// 等待12点
 	select {
-	case <-time.After(time.Until(time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()))):
+	case <-time.After(time.Until(time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location()))):
 		clean()
 	case <-ctx.Done():
 		return
