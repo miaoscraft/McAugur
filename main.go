@@ -56,6 +56,7 @@ func main() {
 			return true
 		},
 	})
+	b.Run()
 }
 
 func isAdmin(qq int64) bool {
