@@ -1,0 +1,147 @@
+{
+    "Places": [{
+            "Name": "ero岛",
+            "GoodEvents": [{
+                    "Name": "可以白嫖铁块"
+                },
+                {
+                    "Name": "可以看到bs女装",
+                    "Cmd": "execute as %s run title @a title [{\"text\":\"BS女装！！！\",\"color\":\"red\",\"bold\":true,\"italic\":true,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false}]"
+                },
+                {
+                    "Name": "看见老观正在把可乐往主板上倒"
+                }
+            ],
+            "BadEvents": [{
+                    "Name": "会被绑架去维修铁塔"
+                },
+                {
+                    "Name": "会被绑架去修分类机"
+                }
+            ]
+        },
+        {
+            "Name": "柚子村",
+            "GoodEvents": [{
+                "Name": "会遇到DJ WCHF"
+            }],
+            "BadEvents": [{
+                    "Name": "白嫖村民会被ZBin打死"
+                },
+                {
+                    "Name:": "刷木头会弄坏树场"
+                }
+            ]
+        },
+        {
+            "Name": "花の岛",
+            "BadEvents": [{
+                    "Name": "会被离岛无条件拍死"
+                },
+                {
+                    "Name": "会被离岛抓去修分类机"
+                }
+            ],
+            "GoodEvents": [{
+                    "Name": "嫖花不会被发现"
+                },
+                {
+                    "Name": "嫖钻石不会被发现"
+                }
+            ]
+        },
+        {
+            "Name": "螭水领",
+            "GoodEvents": [{
+                "Name": "可以泡温泉"
+            }],
+            "BadEvents": [{
+                    "Name": "会在雨林中迷路"
+                },
+                {
+                    "Name": "会被温泉自动门夹死",
+                    "Cmd": "scoreboard players set %s csl_doorkiller 1"
+                }
+            ]
+        },
+        {
+            "Name": "出生点",
+            "GoodEvents": [{
+                    "Name": "可以在坟前蹦迪",
+                    "Cmd": ""
+                },
+                {
+                    "Name": "招揽新人会招到肝帝"
+                },
+                {
+                    "Name": "能找到隐藏宝藏"
+                }
+            ],
+            "BadEvents": [{
+                    "Name": "会被甜梅刺死"
+                },
+                {
+                    "Name": "会碰到十八级袭击而死"
+                }
+            ]
+        },
+        {
+            "Name": "淇竹镇",
+            "GoodEvents": [{
+                "Name": "在田间散步舒缓心情"
+            }],
+            "BadEvents": [{
+                "Name": "会被活过来的雕像吓半死"
+            }]
+        },
+        {
+            "Name": "西伯利亚",
+            "GoodEvents": [{
+                "Name": "能喜提男♂朋友"
+            }],
+            "BadEvents": [{
+                    "Name": "会被冻死"
+                },
+                {
+                    "Name": "会被抓去挖避难所"
+                }
+            ]
+        },
+        {
+            "Name": "星环域",
+            "GoodEvents": [{
+                "Name": "快乐嫖铁"
+            }],
+            "BadEvents": [{
+                    "Name": "会被铁傀儡打死"
+                },
+                {
+                    "Name": "修世吞会炸膛"
+                }
+            ]
+        },
+        {
+            "Name": "资源部第41回收转运中心",
+            "GoodEvents": [{
+                "Name": "捡垃圾"
+            }],
+            "BadEvents": [{
+                "Name": "被GC回收"
+            }]
+        }
+    ],
+    "GoodEvents": [{
+        "Name": "白嫖不会被发现"
+    }],
+    "BadEvents": [{
+            "Name": "白嫖会被抓现行"
+        },
+        {
+            "Name": "会被雷劈死",
+            "Cmd": "scoreboard players add %s lightning_bolt 8"
+        },
+        {
+            "Name": "会被服务器延时卡进墙壁闷死"
+        }
+    ]
+}

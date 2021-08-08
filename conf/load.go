@@ -4,38 +4,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
-
-	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
 )
 
 //Config is used to restore loaded config in McAugur
 type Config struct {
-	Places     []Place  `json:"Places"`
-	GoodEvents []Event  `json:"GoodEvents"`
-	BadEvents  []Event  `json:"BadEvents"`
-	ResetCmds  []string `json:"ResetCmds"`
-	Group      int64    `json:"Group"`
-	Source     string   `json:"Source"`
-	Server     string   `json:"Server"`
-	PassWd     string   `json:"PassWd"`
+	Group     int64   `json:"Group"`
+	Source    string  `json:"Source"`
+	Server    string  `json:"Server"`
+	PassWd    string  `json:"PassWd"`
+	Websocket string  `json:"Websocket"`
+	Token     string  `json:"Token"`
+	Admin     []int64 `json:"Admin"`
 }
 
-//Place is a type to display places
-type Place struct {
-	Name       string  `json:"Name"`
-	GoodEvents []Event `json:"GoodEvents"`
-	BadEvents  []Event `json:"BadEvents"`
-}
-
-//Event includes events and Cmd
-type Event struct {
-	Name string `json:"Name"`
-	Cmd  string `json:"Cmd"`
-}
-
-//LoadConf is used to load Config
-func LoadConf(filename string) (*Config, error) {
+//Load is used to load Config
+func Load(filename string) (*Config, error) {
 	c := new(Config)
 
 	data, err := ioutil.ReadFile(filename)
@@ -47,7 +32,7 @@ func LoadConf(filename string) (*Config, error) {
 			if err = ioutil.WriteFile(filename, data, 0666); err != nil {
 				return nil, fmt.Errorf("创建配置文件失败: %v", err)
 			}
-			cqp.AddLog(cqp.InfoSuccess, "McAugur", "找不到配置文件，已自动添加，请编辑配置文件再开启酷Q")
+			log.Println("McAugur", "找不到配置文件，已自动添加，请编辑配置文件再开启酷Q")
 		} else {
 			return nil, fmt.Errorf("读取配置文件失败: %v", err)
 		}

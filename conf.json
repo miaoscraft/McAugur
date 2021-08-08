@@ -1,0 +1,15 @@
+{
+    "Group": 609632487,
+    "Source": "miaoscraft:miaoscraft123.@tcp(1.15.151.31:3306)/msc_list",
+    "Server": "play.miaoscraft.cn:25575",
+    "PassWd": "fccHandson",
+    "ResetCmds": [
+        "scoreboard objectives remove lightning_bolt",
+        "scoreboard objectives add lightning_bolt dummy"
+    ],
+    "Websocket": "ws://127.0.0.1:6700",
+    "Token": "",
+    "admmin": [
+        1098105012
+    ]
+}
