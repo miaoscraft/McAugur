@@ -1,5 +1,5 @@
-github.com/MscBaiMeow/SimpleBot v0.0.0-20210808030949-284efafdbf90 h1:bME8+9hlZUscE87No1Pzu4obyLlTxcc87MeAEMGd1wE=
-github.com/MscBaiMeow/SimpleBot v0.0.0-20210808030949-284efafdbf90/go.mod h1:7a3RaY3GCUdu2CflYbQLhjgHUNGDO5pSBN3bdMJsr24=
+github.com/BaiMeow/SimpleBot v0.0.0-20210809124224-f9d5f96e07f3 h1:jp46HlLAALiDX5iFJkdS3sxjZ3VvrHyuQ+05q99gpVc=
+github.com/BaiMeow/SimpleBot v0.0.0-20210809124224-f9d5f96e07f3/go.mod h1:BtnE+YJUca3TyMHt7xfzFhfKZWNZsdcvkKyI3txwI2U=
 github.com/Tnze/go-mc v1.17.0 h1:eux33waaSNAUJmnRjYjUmR3NgoHgQStFxHSBYg9I1WM=
 github.com/Tnze/go-mc v1.17.0/go.mod h1:t0AI38F1BEmmy8/uLhr9RCOUeDbBj3oUNQH9akjzMc0=
 github.com/go-sql-driver/mysql v1.4.1 h1:g24URVg0OFbNUTx9qqY1IRZ9D9z3iPyi5zKhQZpNwpA=

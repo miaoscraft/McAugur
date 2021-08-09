@@ -9,9 +9,9 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/MscBaiMeow/SimpleBot/bot"
-	"github.com/MscBaiMeow/SimpleBot/driver"
-	"github.com/MscBaiMeow/SimpleBot/handler"
+	"github.com/BaiMeow/SimpleBot/bot"
+	"github.com/BaiMeow/SimpleBot/driver"
+	"github.com/BaiMeow/SimpleBot/handler"
 	"github.com/miaoscraft/McAugur/conf"
 	"github.com/miaoscraft/McAugur/data"
 	"github.com/miaoscraft/McAugur/rcon"
