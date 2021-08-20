@@ -32,11 +32,11 @@ func main() {
 	b = bot.New(driver.NewWsDriver(config.Websocket, config.Token))
 	b.Attach(&handler.GroupMsgHandler{
 		Priority: 1,
-		F: func(MsgID int32, GroupID int64, FromQQ int64, Msg *message.Msg) bool {
-			if len(*Msg) != 1 {
+		F: func(MsgID int32, GroupID int64, FromQQ int64, Msg message.Msg) bool {
+			if len(Msg) != 1 {
 				return false
 			}
-			txt, ok := (*Msg)[0].(message.Text)
+			txt, ok := Msg[0].(message.Text)
 			if !ok || GroupID != config.Group || txt.Text != "算命" {
 				return false
 			}
@@ -48,11 +48,11 @@ func main() {
 	})
 	b.Attach(&handler.GroupMsgHandler{
 		Priority: 2,
-		F: func(MsgID int32, GroupID int64, FromQQ int64, Msg *message.Msg) bool {
-			if len(*Msg) != 1 {
+		F: func(MsgID int32, GroupID int64, FromQQ int64, Msg message.Msg) bool {
+			if len(Msg) != 1 {
 				return false
 			}
-			txt, ok := (*Msg)[0].(message.Text)
+			txt, ok := Msg[0].(message.Text)
 			if !ok || GroupID != config.Group || !isAdmin(FromQQ) {
 				return false
 			}
@@ -108,7 +108,7 @@ func must(err error) {
 }
 
 // 占卜术式
-func Augur(fromQQ int64) *message.Msg {
+func Augur(fromQQ int64) message.Msg {
 	//启动术式
 	hash := md5.New()
 	name, err := data.QQGetName(fromQQ)
@@ -182,8 +182,8 @@ func Augur(fromQQ int64) *message.Msg {
 	return strToMsg(result)
 }
 
-func strToMsg(str string) *message.Msg {
-	return &message.Msg{
+func strToMsg(str string) message.Msg {
+	return message.Msg{
 		message.Text{Text: str},
 	}
 }
