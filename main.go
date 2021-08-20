@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/binary"
 	"fmt"
+	"github.com/BaiMeow/SimpleBot/message"
 	"log"
 	"math/rand"
 	"time"
@@ -29,10 +30,14 @@ func main() {
 	ctx := context.TODO()
 	go cleanEff(ctx)
 	b = bot.New(driver.NewWsDriver(config.Websocket, config.Token))
-	b.Attach("message.group.normal", &handler.GroupMsgHandler{
+	b.Attach(&handler.GroupMsgHandler{
 		Priority: 1,
-		F: func(MsgID int32, GroupID int64, FromQQ int64, Msg string) bool {
-			if GroupID != config.Group || Msg != "算命" {
+		F: func(MsgID int32, GroupID int64, FromQQ int64, Msg *message.Msg) bool {
+			if len(*Msg) != 1 {
+				return false
+			}
+			txt, ok := (*Msg)[0].(message.Text)
+			if !ok || GroupID != config.Group || txt.Text != "算命" {
 				return false
 			}
 			if _, err := b.SendGroupMsg(GroupID, Augur(FromQQ)); err != nil {
@@ -41,13 +46,17 @@ func main() {
 			return true
 		},
 	})
-	b.Attach("message.group.normal", &handler.GroupMsgHandler{
+	b.Attach(&handler.GroupMsgHandler{
 		Priority: 2,
-		F: func(MsgID int32, GroupID int64, FromQQ int64, Msg string) bool {
-			if GroupID != config.Group || !isAdmin(FromQQ) {
+		F: func(MsgID int32, GroupID int64, FromQQ int64, Msg *message.Msg) bool {
+			if len(*Msg) != 1 {
 				return false
 			}
-			switch Msg {
+			txt, ok := (*Msg)[0].(message.Text)
+			if !ok || GroupID != config.Group || !isAdmin(FromQQ) {
+				return false
+			}
+			switch txt.Text {
 			case "/mcaugur reload":
 				enable()
 			case "/mcaugur clear":
@@ -99,16 +108,16 @@ func must(err error) {
 }
 
 // 占卜术式
-func Augur(fromQQ int64) string {
+func Augur(fromQQ int64) *message.Msg {
 	//启动术式
 	hash := md5.New()
 	name, err := data.QQGetName(fromQQ)
 	if err != nil {
 		log.Println(err.Error())
-		return "算命大失败"
+		return strToMsg("算命大失败")
 	}
 	if name == "" {
-		return "Wait!!!"
+		return strToMsg("Wait!!!")
 	}
 	//将被占卜物代入天命术式
 	y, m, d := time.Now().Date()
@@ -170,15 +179,21 @@ func Augur(fromQQ int64) string {
 		runCmd(fmt.Sprintf(result1.Cmd, name))
 
 	}
-	return result
+	return strToMsg(result)
+}
+
+func strToMsg(str string) *message.Msg {
+	return &message.Msg{
+		message.Text{Text: str},
+	}
 }
 
 func runCmd(cmd string) {
 	log.Println(cmd)
 	resp, err := rcon.Cmd(cmd)
 	if err != nil {
+		b.SendGroupMsg(config.Group, strToMsg("连接服务器失败，算命效果可能无法实装"))
 		log.Fatal(err.Error())
-		b.SendGroupMsg(config.Group, "连接服务器失败，算命效果可能无法实装")
 	}
 	log.Println(resp)
 }
@@ -190,7 +205,7 @@ func cleanEff(goctx context.Context) {
 		for _, v := range AugurData.ResetCmds {
 			runCmd(v)
 		}
-		b.SendGroupMsg(config.Group, "清除已有算命效果完成")
+		b.SendGroupMsg(config.Group, strToMsg("清除已有算命效果完成"))
 	}
 	// 等待12点
 	select {
