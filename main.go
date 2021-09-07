@@ -12,7 +12,6 @@ import (
 
 	"github.com/BaiMeow/SimpleBot/bot"
 	"github.com/BaiMeow/SimpleBot/driver"
-	"github.com/BaiMeow/SimpleBot/handler"
 	"github.com/miaoscraft/McAugur/conf"
 	"github.com/miaoscraft/McAugur/data"
 	"github.com/miaoscraft/McAugur/rcon"
@@ -27,10 +26,11 @@ var (
 
 func main() {
 	enable()
-	ctx := context.TODO()
+	ctx, cancel := context.WithCancel(context.TODO())
 	go cleanEff(ctx)
+	defer cancel()
 	b = bot.New(driver.NewWsDriver(config.Websocket, config.Token))
-	b.Attach(&handler.GroupMsgHandler{
+	b.Attach(&bot.GroupMsgHandler{
 		Priority: 1,
 		F: func(MsgID int32, GroupID int64, FromQQ int64, Msg message.Msg) bool {
 			if len(Msg) != 1 {
@@ -46,7 +46,7 @@ func main() {
 			return true
 		},
 	})
-	b.Attach(&handler.GroupMsgHandler{
+	b.Attach(&bot.GroupMsgHandler{
 		Priority: 2,
 		F: func(MsgID int32, GroupID int64, FromQQ int64, Msg message.Msg) bool {
 			if len(Msg) != 1 {
@@ -66,6 +66,7 @@ func main() {
 		},
 	})
 	b.Run()
+	select {}
 }
 
 func isAdmin(qq int64) bool {
@@ -199,7 +200,7 @@ func runCmd(cmd string) {
 }
 
 //清除算命效果
-func cleanEff(goctx context.Context) {
+func cleanEff(ctx context.Context) {
 	now := time.Now()
 	clean := func() {
 		for _, v := range AugurData.ResetCmds {
@@ -211,7 +212,7 @@ func cleanEff(goctx context.Context) {
 	select {
 	case <-time.After(time.Until(time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location()))):
 		clean()
-	case <-goctx.Done():
+	case <-ctx.Done():
 		return
 	}
 
@@ -221,7 +222,7 @@ func cleanEff(goctx context.Context) {
 		select {
 		case <-timer.C:
 			clean()
-		case <-goctx.Done():
+		case <-ctx.Done():
 			return
 		}
 	}
